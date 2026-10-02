@@ -1,3 +1,7 @@
+AI done this in 5 min, wow...
+
+---
+
 # Complete Journal
 
 A Logseq desktop plugin for **Markdown file graphs** that fills every missing journal day from your earliest existing journal file through today, inclusive.

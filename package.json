@@ -1,6 +1,7 @@
 {
   "name": "logseq-complete-journal",
   "version": "0.1.0",
+  "license": "MIT",
   "description": "Fill missing journal days from your earliest journal through today.",
   "type": "module",
   "main": "dist/index.html",

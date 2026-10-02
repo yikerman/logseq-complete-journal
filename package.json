@@ -1,0 +1,25 @@
+{
+  "name": "logseq-complete-journal",
+  "version": "0.1.0",
+  "description": "Fill missing journal days from your earliest journal through today.",
+  "type": "module",
+  "main": "dist/index.html",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test --test-isolation=none test/*.test.js",
+    "check": "node --check src/index.js && node --check src/journals.js && node --check src/plugin.js"
+  },
+  "dependencies": {
+    "@logseq/libs": "0.0.17",
+    "date-fns": "4.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  },
+  "engines": { "node": ">=22.18" },
+  "logseq": {
+    "id": "logseq-complete-journal",
+    "title": "Complete Journal",
+    "icon": "icon.svg"
+  }
+}

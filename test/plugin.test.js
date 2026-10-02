@@ -60,3 +60,34 @@ test('unloading cancels a pending run and removes hooks', async t => {
   assert.equal(h.writes.filter(w => w.method === 'insertBlock').length, 0);
   assert.equal(h.hooks.size, 0);
 });
+
+test('refreshes journals after backfill without resetting the loaded history', async t => {
+  const h = host();
+  h.state.journalsLength = 17;
+  const plugin = start(t, h);
+  const setState = h.api.App.setStateFromStore;
+  h.api.App.setStateFromStore = async (...args) => {
+    assert.equal(h.writes.filter(w => w.method === 'insertBlock').length, 4);
+    return setState(...args);
+  };
+  await plugin.request();
+  assert.deepEqual(h.stateWrites, [{ key: 'journals-length', value: 18 }]);
+  await h.manual();
+  assert.equal(h.stateWrites.length, 1, 'a run with no missing days should not refresh');
+});
+
+test('does not refresh the new graph if the graph changes at the end of backfill', async t => {
+  const h = host();
+  const plugin = start(t, h);
+  const getState = h.api.App.getStateFromStore;
+  h.api.App.getStateFromStore = async key => {
+    if (key === 'journals-length') {
+      h.state.graph = { url: 'graph-b' };
+      h.hooks.get('graph')();
+    }
+    return getState(key);
+  };
+  await plugin.request();
+  assert.equal(h.writes.filter(w => w.method === 'insertBlock').length, 4);
+  assert.equal(h.stateWrites.length, 0);
+});

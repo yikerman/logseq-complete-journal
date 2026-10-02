@@ -11,8 +11,9 @@ export function host(initialPages = [journal(20260101)]) {
   const blocks = new Map();
   const writes = [];
   const messages = [];
+  const stateWrites = [];
   const hooks = new Map();
-  const state = { graph: { url: 'graph-a' }, loading: {}, restoring: false };
+  const state = { graph: { url: 'graph-a' }, loading: {}, restoring: false, journalsLength: 3 };
   let palette;
   const hook = key => fn => { hooks.set(key, fn); return () => hooks.delete(key); };
   const api = {
@@ -22,7 +23,15 @@ export function host(initialPages = [journal(20260101)]) {
     UI: { async showMsg(...args) { messages.push(args); } },
     App: {
       async getCurrentGraph() { return state.graph; },
-      async getStateFromStore(key) { return key === 'repo/loading-files?' ? state.loading : state.restoring; },
+      async getStateFromStore(key) {
+        if (key === 'repo/loading-files?') return state.loading;
+        if (key === 'journals-length') return state.journalsLength;
+        return state.restoring;
+      },
+      async setStateFromStore(key, value) {
+        stateWrites.push({ key, value });
+        if (key === 'journals-length') state.journalsLength = value;
+      },
       async getUserConfigs() { return { enabledJournals: true, preferredFormat: 'markdown', preferredDateFormat: 'yyyyMMdd' }; },
       registerCommandPalette(options, callback) { palette = callback; },
       onCurrentGraphChanged: hook('graph'),
@@ -49,5 +58,5 @@ export function host(initialPages = [journal(20260101)]) {
       },
     },
   };
-  return { api, pages, blocks, writes, messages, state, hooks, manual: () => palette() };
+  return { api, pages, blocks, writes, messages, state, stateWrites, hooks, manual: () => palette() };
 }

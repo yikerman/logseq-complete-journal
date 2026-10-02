@@ -40,6 +40,15 @@ export function startPlugin(api, formatDate, { debounceMs = 1500, intervalMs = 6
         };
         const result = await fillJournals(api, formatDate, { today: now(), checkActive });
         await checkActive();
+        if (result.created > 0) {
+          // The file-graph journal view subscribes to journals-length and
+          // queries without cache on render. Expanding its window by one
+          // refreshes it without navigating away or resetting loaded history.
+          const length = await api.App.getStateFromStore('journals-length');
+          await checkActive();
+          await api.App.setStateFromStore('journals-length',
+            (Number.isInteger(length) && length > 0 ? length : 3) + 1);
+        }
         if (manual || result.created > 0) {
           const message = result.reason === 'empty' ? 'No existing journal files found; nothing to fill.'
             : result.reason === 'disabled' ? 'Journals are disabled in this graph.'

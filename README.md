@@ -25,6 +25,7 @@ Filling starts automatically when the plugin loads. To rebuild after editing the
 
 - Runs after loading or switching graphs, after indexing, when navigating, and when the local calendar day changes while Logseq stays open.
 - The command palette command **Fill missing journals** runs a scan immediately.
+- After creating missing entries, refreshes the journal list by showing one additional journal. It preserves the already loaded history and keeps your current page open. Runs that create no entries do not refresh the view.
 - Turn off **Automatically fill missing journals** in the plugin settings to use only the manual command.
 - Uses Logseq's numeric journal dates for detection and the graph's preferred date format for new titles. Logseq determines journal file names and the configured journal directory (normally `journals/`).
 - Preserves existing files and journal content. Dates that exist only as references are materialized when they fall within the journal history.
@@ -51,7 +52,7 @@ Tests use Node's built-in test runner and a simulated Logseq API, so tests and s
 For a desktop smoke test:
 
 1. In a test graph, create journal entries for three days ago and today, leaving the two days between them missing.
-2. Load the plugin and run **Fill missing journals**. Verify both dates appear in Journals and both `.md` files appear in the graph's journal directory after the asynchronous save.
+2. Keep the Journals view open, then load the plugin or run **Fill missing journals**. Verify both dates appear without navigating away or restarting, and both `.md` files appear in the graph's journal directory after the asynchronous save.
 3. Check that the files contain two empty bullets and existing journal contents remain unchanged. Run the command again and confirm it reports no missing days.
 4. Reference one missing date from another page before running the plugin; confirm that its file is still created.
 5. Restart Logseq or re-index the graph and verify the generated dates remain visible. Also check a graph using a custom journal date format.
